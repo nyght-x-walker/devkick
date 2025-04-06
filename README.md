@@ -12,7 +12,7 @@ No more repetitive setup. No more clutter. Just one command and boom, you're rea
 
 ### 🚀 Why Devkick?
 
-Full dev environment** in one go: `pyenv`, `poetry`, `direnv`, and `Makefile`-based workflows.
+Full dev environment in one go: `pyenv`, `poetry`, `direnv`, and `Makefile`-based workflows.
  Clean architecture with `app/`, `tests/`, and GitHub Actions out of the box.
  Automatic virtualenv & dependency management.
  Built-in testing, linting, and coverage reporting.
@@ -40,8 +40,8 @@ Full dev environment** in one go: `pyenv`, `poetry`, `direnv`, and `Makefile`-ba
 ### ⚙️ Quick Start
 
 ```bash
-chmod +x advanced_python_project_setup.sh
-./advanced_python_project_setup.sh
+chmod +x devkick.sh
+./devkick.sh
 
 
 # Then...
@@ -49,6 +49,7 @@ chmod +x advanced_python_project_setup.sh
   cd devkick
   make setup
   make run
+  make tests
 
 
 📂 What You Get
