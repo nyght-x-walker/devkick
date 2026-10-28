@@ -31,7 +31,7 @@ fi
 mkdir "$PROJECT_NAME" && cd "$PROJECT_NAME" || exit 1
 
 # Initialize git repo
-git init
+git init -b main
 
 # Set Python version
 echo "$PYTHON_VERSION" > .python-version
@@ -50,8 +50,14 @@ pyenv local "$PYTHON_VERSION"
 poetry init --name "$PROJECT_NAME" --python="$PYTHON_VERSION" --no-interaction
 
 # Inject source package info
-echo "[tool.poetry]" >> pyproject.toml
-echo "packages = [{ include = \"$PROJECT_NAME\" }]" >> pyproject.toml
+python - <<'PY'
+import pathlib
+
+path = pathlib.Path("pyproject.toml")
+text = path.read_text()
+entry = 'packages = [{ include = "app" }]\n'
+path.write_text(text.replace("[tool.poetry]\n", "[tool.poetry]\n" + entry, 1))
+PY
 
 # Create .gitignore
 cat << EOF > .gitignore
@@ -75,14 +81,28 @@ See full setup instructions in this file.
 EOF
 
 # Create LICENSE
-cat << EOF > LICENSE
+cat << 'EOF' > LICENSE
 MIT License
 
-Copyright (c) 2025 nyght-x-walkker
+Copyright (c) 2025 nyght-x-walker
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction [...shortened...]
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
 EOF
 
 # Setup .envrc for direnv
@@ -91,6 +111,7 @@ direnv allow
 
 # Create source and test directories
 mkdir app tests
+touch app/__init__.py tests/__init__.py
 
 # Add dependencies
 poetry add requests
@@ -135,7 +156,7 @@ EOF
 # GitHub Actions workflow
 git_dir=".github/workflows"
 mkdir -p "$git_dir"
-cat << 'EOF' > "$git_dir/python-app.yml"
+cat << EOF > "$git_dir/python-app.yml"
 name: Python application
 
 on:
@@ -149,15 +170,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Set up Python
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
         python-version: "$PYTHON_VERSION"
     - name: Install Poetry
       run: |
         curl -sSL https://install.python-poetry.org | python3 -
-        echo "export PATH=\"\$HOME/.local/bin:\$PATH\"" >> $GITHUB_ENV
+        echo "export PATH=\"\$HOME/.local/bin:\$PATH\"" >> \$GITHUB_ENV
     - name: Install dependencies
       run: poetry install
     - name: Run tests
@@ -170,68 +191,40 @@ EOF
 
 # Update README with full instructions
 cat << 'EOF' > README.md
-# ⚡ Devkick
+# Devkick
 
-> A lightning-fast way to spin up new Python projects with best practices built-in ⚙️🔥
+A clean Python project scaffold with pyenv, Poetry, direnv, a Makefile, tests, and CI.
 
 ![CI](https://github.com/nyght-x-walker/devkick/actions/workflows/python-app.yml/badge.svg)
 
-Devkick is a high-voltage Python project scaffolding tool that helps you launch clean, modern, and production-ready environments in seconds.
-
-No more repetitive setup. No more clutter. Just one command and boom, you're ready to code.
-
----
-
-### 🚀 Why Devkick?
-
-Full dev environment** in one go: `pyenv`, `poetry`, `direnv`, and `Makefile`-based workflows.
- Clean architecture with `app/`, `tests/`, and GitHub Actions out of the box.
- Automatic virtualenv & dependency management.
- Built-in testing, linting, and coverage reporting.
- Compatible with `requirements.txt` export for other tooling.
-
----
-
-### 🛠 Requirements
-
- [pyenv](https://github.com/pyenv/pyenv)
- [poetry](https://python-poetry.org/docs/#installation)
- [direnv](https://direnv.net/)
-
----
-
- \`pyenv\` – Python version management
- \`poetry\` – Dependency management and virtualenvs
- \`direnv\` – Auto-activation of environments
- \`Makefile\` – Simplified development workflow
- GitHub Actions CI/CD workflow
- Coverage reporting with \`coverage.py\`
- \`requirements.txt\` for tool compatibility
-
-
-### ⚙️ Quick Start
+## Quick start
 
 ```bash
-chmod +x advanced_python_project_setup.sh
-./advanced_python_project_setup.sh
+make setup
+make run
+make test
+```
 
+## What you get
 
-# Then...
+- `.python-version` pinned to the active Python version
+- `pyproject.toml` managed with Poetry
+- `.envrc` wired for direnv
+- `app/` and `tests/` starter layout
+- A Makefile with `setup`, `run`, `test`, `lint`, and `coverage`
+- GitHub Actions CI for tests and coverage
+- `requirements.txt` export for tooling that does not use Poetry
+- MIT license
 
-  cd devkick
-  make setup
-  make run
+## Make targets
 
-
-📂 What You Get
-
-  app/ → Your main Python source code
-  tests/ → Ready-to-go Pytest testing setup
-  python-version → Isolated with pyenv
-  envrc → Automatic env loading via direnv
-  pyproject.toml → Managed with poetry
-  Makefile → Run commands like make test, make lint, etc.
-  github/workflows/ → CI pipeline with GitHub Actions
+```bash
+make setup     # install dependencies
+make run       # run app/main.py
+make test      # run pytest
+make lint      # run black
+make coverage  # run coverage and print a report
+```
 EOF
 
 echo "✅ Project '$PROJECT_NAME' setup complete!"
