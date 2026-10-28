@@ -1,63 +1,54 @@
-# ⚡ Devkick
+# Devkick
 
-> A lightning-fast way to spin up new Python projects with best practices built-in ⚙️🔥
+**Scaffold a clean Python project with pyenv, Poetry, direnv, a Makefile, tests, and CI in one command.**
 
-![CI](https://github.com/nyght-x-walker/devkick/actions/workflows/python-app.yml/badge.svg)
+[Repository](https://github.com/nyght-x-walker/devkick) · [MIT License](LICENSE)
 
-Devkick is a high-voltage Python project scaffolding tool that helps you launch clean, modern, and production-ready environments in seconds.
+![Devkick banner](assets/devkick_banner.png)
 
-No more repetitive setup. No more clutter. Just one command and boom, you're ready to code.
+## Why Devkick
 
----
+Setting up a Python project usually means repeating the same setup: pin a Python version, create a virtual environment, wire dependencies, add a test runner, and remember the CI file. Devkick turns that into one command.
 
-### 🚀 Why Devkick?
+## Requirements
 
-Full dev environment in one go: `pyenv`, `poetry`, `direnv`, and `Makefile`-based workflows.
- Clean architecture with `app/`, `tests/`, and GitHub Actions out of the box.
- Automatic virtualenv & dependency management.
- Built-in testing, linting, and coverage reporting.
- Compatible with `requirements.txt` export for other tooling.
+- [pyenv](https://github.com/pyenv/pyenv)
+- [Poetry](https://python-poetry.org/docs/#installation)
+- [direnv](https://direnv.net/)
 
----
-
-### 🛠 Requirements
-
- [pyenv](https://github.com/pyenv/pyenv)
- [poetry](https://python-poetry.org/docs/#installation)
- [direnv](https://direnv.net/)
-
----
-
- \`pyenv\` – Python version management
- \`poetry\` – Dependency management and virtualenvs
- \`direnv\` – Auto-activation of environments
- \`Makefile\` – Simplified development workflow
- GitHub Actions CI/CD workflow
- Coverage reporting with \`coverage.py\`
- \`requirements.txt\` for tool compatibility
-
-
-### ⚙️ Quick Start
+## Quick start
 
 ```bash
 chmod +x devkick.sh
-./devkick.sh
+./devkick.sh my-project
+cd my-project
+make setup
+make run
+```
 
+The project name is optional and defaults to `devkick`.
 
-# Then...
+## What you get
 
-  cd devkick
-  make setup
-  make run
-  make tests
+- `.python-version` pinned to the active Python version
+- `pyproject.toml` managed with Poetry
+- `.envrc` wired for direnv
+- `app/` and `tests/` starter layout
+- A Makefile with `setup`, `run`, `test`, `lint`, and `coverage`
+- GitHub Actions CI for tests and coverage
+- `requirements.txt` export for tooling that does not use Poetry
+- MIT license and a starter README
 
+## Make targets
 
-📂 What You Get
+```bash
+make setup     # install dependencies
+make run       # run app/main.py
+make test      # run pytest
+make lint      # run black
+make coverage  # run coverage and print a report
+```
 
-  app/ → Your main Python source code
-  tests/ → Ready-to-go Pytest testing setup
-  python-version → Isolated with pyenv
-  envrc → Automatic env loading via direnv
-  pyproject.toml → Managed with poetry
-  Makefile → Run commands like make test, make lint, etc.
-  github/workflows/ → CI pipeline with GitHub Actions
+## Notes
+
+Devkick is intentionally small and shell-based. It is a starting point, not a framework; edit the generated files to fit the project.
