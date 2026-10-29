@@ -2,7 +2,7 @@
 
 **Scaffold a clean Python project with pyenv, Poetry, direnv, a Makefile, tests, and CI in one command.**
 
-[Repository](https://github.com/nyght-x-walker/devkick) · [MIT License](LICENSE)
+[Repository](https://github.com/nyght-x-walker/devkick) · [Generated sample](https://github.com/nyght-x-walker/devkick_my-awesome-project) · [MIT License](LICENSE)
 
 ![Devkick banner](assets/devkick_banner.png)
 
